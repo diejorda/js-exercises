@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crud API REST AJAX</title>
+</head>
+<body>
+    <h1>CRUD API REST AJAX</h1>
+    <section class="crud">
+        <article>
+            <h2 class="crud-title">Agregar Santo</h2>
+            <form class="crud-form">
+                <input type="text" name="nombre" placeholder="nombre" required>
+                <br>
+                <input type="text" name="constelacion" placeholder="constelacion" required>
+                <br>
+                <input type="submit" value="enviar">
+                <input type="hidden" name="id">
+            </form>
+        </article>
+        <article>
+            <h2>Ver santos</h2>
+            <table class="crud-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Constelacion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                </tbody>
+            </table>
+        </article>
+
+    </section>
+    <template id="crud-template">
+        <tr>
+            <td class="name"></td>
+            <td class="constelation"></td>
+            <td>
+                <button class="edit">Editar</button>
+                <button class="delete">Eliminar</button>
+            </td>
+        </tr>
+    </template>
+    <script>
+        //Se crean las constantes que se van a utilizar durante el projecto
+        const d= document,
+        $table=d.querySelector(".crud-table"),
+        $form=d.querySelector(".crud-form"),
+        $title=d.querySelector(".crud-title"),
+        $template=d.getElementById("crud-template").content,//se creo un template para utilizarlo en el tbody
+        $fragment= d.createDocumentFragment();
+
+        const ajax = (options) =>{//se crea una funcion donde se le proporciona un objeto para inicializar
+            let {url,method,success,error,data} = options;// se defragmenta el objeto en estos parametros
+            //url es un string, data es un objeto js,  method va a ser que tipo de operacion vamos a utilizar (string),
+            //error y succes son funciones creadas.
+            const xhr = new XMLHttpRequest;
+            
+            xhr.addEventListener("readystatechange",e=>{
+                if(xhr.readyState !==4) return;// hay cuatro estados el estado 4 es el estado final donde la data esta lista para utilizarse
+                //por lo tanto si no estamos en estado 4 la funcion se cierra con return
+                if(xhr.status >= 200&& xhr.status<300){ // los parametros status 200 a 300 retornan estados de exito, por lo tanto si hubo exito
+                    let json =JSON.parse(xhr.responseText);// se guarda en la variable json la transformacion de la respuesta a JSON
+                    success(json);// luego se ejecuta nuestra funcion utilizando la data de la respuesta que nos dio el servido
+                }else{
+                    let message = xhr.statusText || "Ocurrio un error"; //si el readystate nos retorna algo distinto a succes
+                    // guardamos en la variable message el atributo statusText (texto que describe el error) y en caso de que
+                    //El status text venga vacio utilizamos un string nuestro generico que diga ocurrio un error.
+                    error(`Error ${xhr.status}:${message}`);// utilizamos nuestra funcion error que le insertamos un string con el codigo de error y el menssage.
+                }
+            });
+            // dependiendo del method que coloquemos al inicializar la funcion ajax va a borrar, cambiar, enviar o obtener data
+            // igualmente se coloca get como metodo predefinido en caso de que valor venga vacio. (Habria que hacer verificaciones de string para descartar valores no permitidos)
+            xhr.open(method||"GET",url);
+            //retorna la cabezera de que tipo de codigo que planea recibir la api server, en este caso JSON
+            xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+            //
+            xhr.send(JSON.stringify(data));// como el api server espera json nosotros vamos a transformar la data js en formato json
+
+    
+        }
+        
+        const getAll = ()=>{
+            ajax({
+               // method:"GET",
+                url:"http://localhost:5000/santos",
+                success:(res) => {
+                    console.log(res);//res me trae los santos que son 5 objetos de tipo santo
+                    res.forEach(el=>{
+                        //El contenido de texto de del selector que apunta a la clase name dentro del template va a ser igual al valor del atributo nombre del elemento
+                        $template.querySelector(".name").textContent=el.nombre
+                        //mismo para la constelacion
+                        $template.querySelector(".constelation").textContent=el.constelacion;
+                        // a su vez se le agregaran data atributes al html en los botones edit y delete para poder manipular sus acciones luego.
+                        $template.querySelector(".edit").dataset.id=el.id;
+                        $template.querySelector(".edit").dataset.nombre=el.nombre;
+                        $template.querySelector(".edit").dataset.constelation=el.constelacion;
+                        $template.querySelector(".delete").dataset.id=el.id;
+                        // con estos ultimos query selectos los vamos a utilizar para guardar la info dentro del html en forma de data set para usarla en los eventos click.
+
+
+
+                        //como el template se necesita para las iteracions, la mejor manera es crear un clon de el.
+                        let $clon = d.importNode($template,true);// true lo importo con su contenido, false sin el contenido 
+                        // para no afectar tanto el rendimiento del DOM utilizo un fragmento donde se valla actualizando el for each para luego hacer todos los cambios juntos.
+                        $fragment.appendChild($clon);//se agrega la copia del template como hijo del 
+                        
+                    })
+                    // dentro de la tabla donde queremos trabajar le vamos a gregar los caballeros(contenido del fragment) en el tbdy
+                    $table.querySelector("tbody").appendChild($fragment);
+                },
+                error:(err) => {
+                    console.log(err)
+                $table.insertAdjacentHTML("afterend",`<p><b>${err}</b></p>`);
+                },
+               // data = null
+               // method get y data null no son necesarios ya que estan predefinidos dentro de la funcion ajax.
+            }
+            )
+        }
+        d.addEventListener("DOMContentLoaded",getAll);
+        // al clickear submit (enviar)
+        d.addEventListener("submit",e=>{
+            // si el submit se realiza dentro de del formulario (guardado en la var $form previamente)
+            if(e.target === $form){
+                e.preventDefault()
+                
+                // el contenido  de los inputs va a ser guardado por una funcion ajax
+                // hay dos opciones, la primera es que el contenido de los inputs sea nuevo, la otra es que sea una modificacion
+                //hay un imput type hidden,que tiene el valor id cuando id sea vacio significa que lo que quiero hacer es un POST
+                // cuando venga con valor significa que quiero modificar PUT
+                if(!e.target.id.value){// si NO, e.target( es el fomulario).id(name=id).value(tiene o no valor)
+                        //POST - create
+                    ajax({// agrego el metodo que es POST
+                        method:"POST",
+                        url:"http://localhost:5000/santos",
+                        success:(res)=>location.reload(),//En succes hago un reaload de la pagina para que aparezca la data
+                        error:()=>$form.insertAdjacentHTML("afterend",`<p><b>${err}</b></p>`),//inserto abajo de la tabla el error
+                        data:{//agrego la data del santo, en json el id se genera automaticamente
+                            nombre:e.target.nombre.value,// e.target es el form-crud, .nombre es el input con name name nombre, .value retorna el valor escrito en el input
+                            constelacion:e.target.constelacion.value // ""
+
+                        }
+                        
+                    });
+
+                }else{
+                    //PUT-UPDATE 
+                    //antes de hacer el update tengo que lograr que cuando se presiona el boton editar en la tabla los valores se muetren en los input para ser modificados
+                    //esta mas abajo el evento click ene l document
+                    ajax({
+                        method:"PUT",
+                        url:`http://localhost:5000/santos/${e.target.id.value}`,//LA URL ES ESPECIFICA PARA MODIFICAR
+                        success:(res)=>location.reload(),//En succes hago un reaload de la pagina para que aparezca la data
+                        error:()=>$form.insertAdjacentHTML("afterend",`<p><b>${err}</b></p>`),//inserto abajo de la tabla el error
+                        data:{//agrego la data del santo, en json el id se genera automaticamente
+                            nombre:e.target.nombre.value,// e.target es el form-crud, .nombre es el input con name name nombre, .value retorna el valor escrito en el input
+                            constelacion:e.target.constelacion.value
+                        }
+                    })
+                }
+               
+            }})
+
+            d.addEventListener("click",e=>{
+                
+                if(e.target.matches(".edit")){
+                    
+                    $title.textContent="Editar Santo"; // cambio el titulo de agregar santo a editar santo.
+                    $form.nombre.value=e.target.dataset.nombre ;// al formulario en el input nombre le voy a colocar la info del dataset nombre del target en el value
+                    $form.constelacion.value=e.target.dataset.constelation;
+                    $form.id.value=e.target.dataset.id;
+
+
+                }
+                if(e.target.matches(".delete")){
+                    if(confirm("Estas Seguro de eliminar")){
+                        ajax({
+                            method:"DELETE",
+                            success:(res)=>location.reload(),//En succes hago un reaload de la pagina para que aparezca la data
+                            error:()=>$form.insertAdjacentHTML("afterend",`<p><b>${err}</b></p>`),//inserto abajo de la tabla el error
+                            url:`http://localhost:5000/santos/${e.target.dataset.id}`
+                        })
+                    }
+                }
+            })
+        
+   </script>
+</body>
+</html>

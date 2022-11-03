@@ -1,0 +1,51 @@
+{
+  "santos": [
+    {
+      "id": 2,
+      "nombre": "Shiryu",
+      "constelacion": "Dragon"
+    },
+    {
+      "nombre": "Hyoga",
+      "constelacion": "Cisness",
+      "id": 3
+    },
+    {
+      "id": 4,
+      "nombre": "Shun",
+      "constelacion": "Andromeda"
+    },
+    {
+      "nombre": "Ikki",
+      "constelacion": "FenixSS",
+      "id": 5
+    },
+    {
+      "nombre": "Luffy",
+      "constelacion": "Mera",
+      "id": 6
+    }
+  ],
+  "dioses": [
+    {
+      "id": 1,
+      "nombre": "Atenea",
+      "de": "Tierra"
+    },
+    {
+      "id": 2,
+      "nombre": "Poseidon",
+      "de": "mar"
+    },
+    {
+      "id": 3,
+      "nombre": "Hades",
+      "de": "inframundo"
+    },
+    {
+      "id": 4,
+      "nombre": "Zeus",
+      "de": "Cielo"
+    }
+  ]
+}

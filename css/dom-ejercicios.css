@@ -1,0 +1,347 @@
+:root{
+    --main-font:sans-serif;
+    --font-size:16px;
+    --main-color:#319af0;
+    --second-color:#222;
+    --main-modal-color:rgb(45, 91, 218);
+    --second-modal-color:rgba(0, 0, 0, 0.609);
+    --container-width:1200px;
+}
+html{
+    box-sizing: border-box;
+    font-family: var(--main-font);
+    font-size: var(--font-size);
+    scroll-behavior: smooth;
+}
+*,*:before,*:after{
+    box-sizing: inherit;
+}
+body{
+    margin: 0;
+    overflow-x: hidden;
+}
+img{max-width: 100%;
+height: auto;}
+
+/* menuhamburguer*/
+
+.header{
+    position: sticky;
+    top: 0;
+    padding: 1rem;
+    background-color: var(--main-color);
+    color: var(--second-color);
+    z-index: 997;
+    height: 4rem;
+}
+.header h1{
+    margin: 0 auto;
+    text-align: center;
+}
+.section{
+    padding: 2rem;
+    padding-top: 4rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: var(--container-width);
+    min-height: 100vh;
+    text-align: center;
+}
+.panel{
+    position: fixed;
+    z-index: 998;
+    width: 100%;
+    background-color: var(--second-modal-color);
+    /* Para generar esos paneles que ocupan toda la pantalla*/
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease;
+    /*salga de arriba*/
+    /*transform: translate(0,-100%);*/
+
+}
+.panel.is-active{
+   
+    opacity: 1;
+    visibility: visible;
+}
+.panel-btn{
+    position: fixed;
+    z-index: 999;
+    bottom: 1vh;
+    right: 1vw;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--main-color);
+
+}
+
+.menu{
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    
+}
+.menu a{
+    height: 100px;
+    padding: 2rem;
+    width: inherit;
+    display: block;
+    font-size: 1.6rem;
+    text-decoration: none;
+    color: var(--main-color);
+    transition: all 0.3s ease
+    ;
+}
+.menu a:hover{
+    font-weight: bold;
+    color: var(--second-color);
+    background-color: var(--main-modal-color);
+}
+.active{font-weight: bold;
+    color: var(--second-color);
+    background-color: var(--main-modal-color);}
+
+.stage{
+    display: flex;
+    min-height: 50vh;
+    background-color: var(--second-color);
+
+}
+.ball{
+    margin: auto;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background-color: var(--main-color);
+}
+.scroll-tp-btn{
+    position: fixed;
+    z-index: 999;
+    bottom: 1vh;
+    right:calc(4.7rem + 1vw);/* para que este a 4 rem de la hamburguesa*/
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 2.5rem;
+    background-color: var(--main-color);
+    color: var(--second-color);
+    border: none;
+    opacity: 1;
+    transition: all 0.5s ease;
+    outline: 0;
+}
+.scroll-tp-btn:hover{
+    background-color: var(--second-color);
+    color: var(--main-color)
+}
+.hidden{
+    visibility: hidden;
+    opacity: 0;
+}
+.btn-nightmode{
+    position: fixed;
+    z-index: 999;
+    bottom: 1vh;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    font-size: 2rem;
+    background-color:var(--main-color);
+    color: var(--second-color);
+    transition: all ease 0.5s;
+}
+.btn-nightmode:hover{
+    color:var(--main-color);
+    background-color: var(--second-color);
+}
+.nightmode{
+    color:var(--main-color);
+    background-color: var(--second-color);
+}
+
+.online,.offline{
+position: sticky;
+top: 0;
+z-index: 1000;
+padding: 1rem;
+font-size: 1.5rem;
+font-weight: bold;
+text-align: center;
+background-color: rgb(3, 194, 3);
+color: white;
+transition: all ease 0.5s;
+}
+.offline{
+    background-color: red;
+}
+.cards{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+}
+.card{
+    width: 200px;
+    
+}
+.card figcaption{
+    background-color: var(--second-color);
+    color: var(--main-color);
+    margin-top: -5px;
+    padding:1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.filter{
+    display: none;
+}
+
+/* responsive slider*/
+
+.slider{
+    position:relative;
+    width: 80%; /*Contenedor 80% del window*/
+    margin: 1rem auto;
+    text-align: center;
+
+}
+.slider-slides{
+    position: relative;
+    height: 400px;
+   ;
+    
+}
+.slider-slide{
+    position: absolute;/*posision absoluta dentro del contenedor que es relativo*/
+    top: 0; /*por eso le puedo poner top 0 y left 0*/
+    left: 0; /* por lo tanto se ubica dentro del contenedor padre*/
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease;
+    border: solid 1px black;
+}
+.slider-slide img{
+    height: inherit;/*hereda dimenciones del padre slider-slides*/
+    width: inherit;
+    object-fit: cover;/*se adapta al tamaño del contenedor aunque se deforme*/
+    object-position: 50% 0%;/* centra la imagen para verla lo mejor posible.*/
+}
+
+.slider-slide.active{
+    visibility: visible;
+    opacity: 1;
+}
+.slider a{
+    display: block;
+   
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: thin solid black;
+    text-decoration: none;/* quita la decoracion por defecto de html*/
+    background-color: #fff;
+    color: black;
+    transition: all 0.3s ease;
+}
+.slider a:hover{
+    opacity: 0.5;
+}
+.slider-btns{
+    position: absolute;
+    width: 100%;/* al poner absolute pierde el parametro de ancho del contenedor*/
+    top: 50%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 3rem;
+    
+    
+
+}
+/*scrollspy*/
+
+@media screen and (min-width:1024px){
+/* maqueto con grid css*/
+/* 2 columnas 80|20 %
+header 100%*/
+    body{
+        display: grid;
+        grid-template-columns: 80% 20%;
+        grid-template-rows: 4rem auto;
+        /* grid template area me permite dibujar con texto el orden del contenido*/
+        grid-template-areas:
+        "header header"
+        "main panel";
+        /*las etiquetas deben ser declaradas por grid area*/
+
+
+    }
+    main{
+        grid-area: main;
+    }
+    .header{grid-area: header;}
+
+    .panel-btn{display: none;}
+    .panel{
+        grid-area: panel;
+        position: sticky;
+        top:4rem;
+        align-self: start;
+        min-height: 90vh; ;
+        transform: translate(0,0);
+        
+       
+        visibility: visible;
+        opacity: 1;
+        
+        background-color: var(--second-color);
+        
+    }
+    .menu{
+        justify-content: start;
+        text-align:right;
+    }
+    .menu a{
+        max-height: 20px;
+        font-size:0.8rem;
+        
+        padding: 0.8rem;
+        padding-bottom: 1.8rem;
+    
+        
+    }
+    .scroll-tp-btn{left:calc(4.7rem + 1vw);
+    border: 2px black solid;}
+    
+   .video{
+       max-width: 80%;
+   }
+  /*FORMULARIO*/
+
+
+   .contact-form{
+       width: 80%;
+       margin: auto;
+   }
+   .contact-form textarea {
+    resize: none;
+  }
+  
+
+}
